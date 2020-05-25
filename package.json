@@ -21,5 +21,14 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.15",
     "morgan": "^1.10.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andresr31/NovaMail_Server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Andresr31/NovaMail_Server/issues"
+  },
+  "homepage": "https://github.com/Andresr31/NovaMail_Server#readme"
 }

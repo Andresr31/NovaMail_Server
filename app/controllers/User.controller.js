@@ -138,7 +138,7 @@ exports.update = (req, res) => {
         });
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////
-// Delete a Product by its id
+// Delete a User by its id
 exports.delete = (req, res) => {
     User.findByIdAndRemove(req.params.id)
         .then(user => {
