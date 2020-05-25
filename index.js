@@ -35,6 +35,7 @@ app.get('/', (req, res) => {
 });
 
 require('./app/routes/User.routes.js')(app);
+require('./app/routes/Message.routes.js')(app);
 // Start the server with selected configuration [5]
 ////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
