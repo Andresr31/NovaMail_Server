@@ -11,7 +11,7 @@
     "REST",
     "NodeJS"
   ],
-  "author": "Carlos Andres Rojas Parra <carlos.rojasp@autonoma.edu.co>",
+  "author": "Carlos Andres Rojas Parra - David Salgado Ospina",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^4.0.1",

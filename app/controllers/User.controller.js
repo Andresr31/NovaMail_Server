@@ -50,7 +50,7 @@ exports.authenticate = (req, res) => {
                     expiresIn: '1h'
                 });
                 res.json({
-                    status: "Ok",
+                    status: "200",
                     message: "El usuario ha sido autenticado!!!",
                     data: {
                         user: userInfo,
