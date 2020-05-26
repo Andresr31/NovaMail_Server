@@ -7,7 +7,7 @@ module.exports = (app) => {
     // List all received Messages
     app.get('/api/inbox/:id', rutasProtegidas, messages.findAllInbox);
     // Get a single recived Message by id
-    app.get('/api/messages/:id', rutasProtegidas, messages.findOne);
+    app.get('/api/messagesin/:id', rutasProtegidas, messages.findOneInbox);
     // Delete a received Message by id
     app.delete('/api/messages/:id', rutasProtegidas, messages.delete);
     // Change status Message received
@@ -15,5 +15,5 @@ module.exports = (app) => {
     // List all sent Messages
     app.get('/api/outbox/:id', rutasProtegidas, messages.findAllOutbox);
     // Get a single sent Message by id
-    app.get('/api/messages/:id', rutasProtegidas, messages.findOne);
+    app.get('/api/messagesout/:id', rutasProtegidas, messages.findOneOutbox);
 }

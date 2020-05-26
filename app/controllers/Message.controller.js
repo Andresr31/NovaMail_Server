@@ -57,7 +57,6 @@ exports.findAllInbox = (req, res) => {
                 const message = messages[i];
                 let user = await searchUserById(message.transmitter);
                 data.push({message:message, transmitter:user});
-                
             }
             // messages.forEach(async message => {
             //     let user = await searchUserById(message.transmitter);
@@ -112,16 +111,28 @@ exports.findAllOutbox = (req, res) => {
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-// Get a single Message by its id
-exports.findOne = (req, res) => {
+// Get a single Message by its id on Inbox
+exports.findOneInbox = (req, res) => {
     Message.findById(req.params.id)
-        .then(Message => {
+        .then(async Message => {
             if (!Message) {
                 return res.status(404).send({
                     message: "Message not found with id:" + req.params.id
                 });
             }
-            res.status(200).send(Message);
+            
+            let data = [];
+            let user = await searchUserById(Message.transmitter);
+            data.push({message:Message, transmitter:user});
+            // messages.forEach(async message => {
+            //     let user = await searchUserById(message.transmitter);
+            //     data.push({message:message, transmitter:user});
+            //     //messages.transmitter = user
+            //     console.log(data);
+            // });
+            return res.status(200).send(data);
+
+
         }).catch(err => {
             if (err.kind === 'ObjectId') {
                 return res.status(404).send({
@@ -133,6 +144,53 @@ exports.findOne = (req, res) => {
             });
         });
 };
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// Get a single Message by its id on Outbox
+exports.findOneOutbox = (req, res) => {
+    Message.findById(req.params.id)
+        .then(async Message => {
+            if (!Message) {
+                return res.status(404).send({
+                    message: "Message not found with id:" + req.params.id
+                });
+            }
+
+            let data = [];
+                
+            let users = []
+            for (let j = 0; j < Message.receiver.length; j++) {
+                const uId = Message.receiver[j];
+                let user = await searchUserById(uId);
+                users.push(user);
+            }
+                
+            data.push({message:Message, receivers:users});
+                
+            // messages.forEach(async message => {
+            //     let user = await searchUserById(message.transmitter);
+            //     data.push({message:message, transmitter:user});
+            //     //messages.transmitter = user
+            //     console.log(data);
+            // });
+            return res.status(200).send(data);
+
+
+        }).catch(err => {
+            if (err.kind === 'ObjectId') {
+                return res.status(404).send({
+                    message: "Message not found with id:" + req.params.id
+                });
+            }
+            return res.status(500).send({
+                message: "Something wrong ocurred while retrieving the record with id:" + req.params.id
+            });
+        });
+};
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Delete a Message by its id
 exports.delete = (req, res) => {
