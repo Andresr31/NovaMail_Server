@@ -49,16 +49,68 @@ async function searchUser(email){
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Retrieve and list all Messages on inbox
-exports.findAll = (req, res) => {
-    Message.find()
-        .then(messages => {
-            res.status(200).send(messages);
+exports.findAllInbox = (req, res) => {
+    Message.find({receiver: req.params.id})
+        .then(async messages => {
+            let data = []
+            for (let i = 0; i < messages.length; i++) {
+                const message = messages[i];
+                let user = await searchUserById(message.transmitter);
+                data.push({message:message, transmitter:user});
+                
+            }
+            // messages.forEach(async message => {
+            //     let user = await searchUserById(message.transmitter);
+            //     data.push({message:message, transmitter:user});
+            //     //messages.transmitter = user
+            //     console.log(data);
+            // });
+            return res.status(200).send(data);
+
         }).catch(err => {
             return res.status(500).send({
                 message: err.message || "Something wrong occurred while retrieving therecords."
             });
         });
+
 };
+async function searchUserById(id){
+    let user = await User.findOne({_id:id});
+    return user;
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// Retrieve and list all Messages on outbox
+exports.findAllOutbox = (req, res) => {
+    Message.find({transmitter: req.params.id})
+    .then(async messages => {
+        let data = []
+        for (let i = 0; i < messages.length; i++) {
+            const message = messages[i];
+            let users = []
+            for (let j = 0; j < message.receiver.length; j++) {
+                const uId = message.receiver[j];
+                let user = await searchUserById(uId);
+                users.push(user);
+            }
+            
+            data.push({message:message, receivers:users});
+            
+        }
+        // messages.forEach(async message => {
+        //     let user = await searchUserById(message.transmitter);
+        //     data.push({message:message, transmitter:user});
+        //     //messages.transmitter = user
+        //     console.log(data);
+        // });
+        return res.status(200).send(data);
+
+    }).catch(err => {
+        return res.status(500).send({
+            message: err.message || "Something wrong occurred while retrieving therecords."
+        });
+    });
+};
+//////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Get a single Message by its id
 exports.findOne = (req, res) => {
