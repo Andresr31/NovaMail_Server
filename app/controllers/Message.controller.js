@@ -114,16 +114,28 @@ exports.findAllOutbox = (req, res) => {
 // Get a single Message by its id on Inbox
 exports.findOneInbox = (req, res) => {
     Message.findById(req.params.id)
-        .then(async Message => {
-            if (!Message) {
+        .then(async message => {
+            if (!message) {
                 return res.status(404).send({
                     message: "Message not found with id:" + req.params.id
                 });
             }
             
             let data = [];
-            let user = await searchUserById(Message.transmitter);
-            data.push({message:Message, transmitter:user});
+            message.statusReceived = true;
+            Message.findByIdAndUpdate(req.params.id, {
+                transmitter: message.transmitter,
+                receiver: message.receiver,
+                topic: message.topic,
+                content: message.content,
+                statusReceived: message.statusReceived,
+                statusDeleted:false,
+            }, {
+                new: true
+            });
+
+            let user = await searchUserById(message.transmitter);
+            data.push({message:message, transmitter:user});
             // messages.forEach(async message => {
             //     let user = await searchUserById(message.transmitter);
             //     data.push({message:message, transmitter:user});
@@ -212,6 +224,47 @@ exports.delete = (req, res) => {
             }
             return res.status(500).send({
                 message: "Something wrong ocurred while deleting the record with id:" + req.params.id
+            });
+        });
+};
+
+exports.changeStatusDeleted = (req, res) => {
+    Message.findById(req.params.id)
+        .then(async message => {
+            if (!message) {
+                return res.status(404).send({
+                    message: "Message not found with id:" + req.params.id
+                });
+            }
+            
+            let data = [];
+            message.statusDeleted = req.body.statusDeleted;
+            Message.findByIdAndUpdate(req.params.id, {
+                transmitter: message.transmitter,
+                receiver: message.receiver,
+                topic: message.topic,
+                content: message.content,
+                statusReceived: message.statusReceived,
+                statusDeleted: message.statusDeleted,
+            }, {
+                new: true
+            })
+            .then(message => {
+                if (!message) {
+                    return res.status(404).send({
+                        message: "Message not found with id:" + req.params.id
+                    });
+                }
+                res.status(200).send(message);
+            }).catch(err => {
+                if (err.kind === 'ObjectId') {
+                    return res.status(404).send({
+                        message: "Message not found with id:" + req.params.id
+                    });
+                }
+                return res.status(500).send({
+                    message: "Something wrong ocurred while updating the record with id:" + req.params.id
+                });
             });
         });
 };

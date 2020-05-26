@@ -11,7 +11,7 @@ module.exports = (app) => {
     // Delete a received Message by id
     app.delete('/api/messages/:id', rutasProtegidas, messages.delete);
     // Change status Message received
-    //app.delete('/api/messages/:id', rutasProtegidas, messages.changeStatus);
+    app.put('/api/messages/:id', rutasProtegidas, messages.changeStatusDeleted);
     // List all sent Messages
     app.get('/api/outbox/:id', rutasProtegidas, messages.findAllOutbox);
     // Get a single sent Message by id
