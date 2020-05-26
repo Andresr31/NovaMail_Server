@@ -9,7 +9,7 @@ module.exports = (app) => {
     // Delete a received Message by id
     app.delete('/api/messages/:id', messages.delete);
     // Change status Message received
-    app.delete('/api/messages/:id', messages.changeStatus);
+    //app.delete('/api/messages/:id', messages.changeStatus);
     // List all sent Messages
     app.get('/api/outbox/:id', messages.findAll);
     // Get a single sent Message by id
