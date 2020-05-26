@@ -17,7 +17,9 @@ exports.createMessage = (req, res) => {
         transmitter: req.body.transmitter,
         receiver: req.body.receiver,
         topic: req.body.topic,
-        content: req.data.content
+        content: req.data.content,
+        statusReceived: false,
+        statusDeleted: false
     });
     // Save the Message in the database
     message.save()

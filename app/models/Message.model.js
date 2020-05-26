@@ -12,11 +12,12 @@ const MessageSchema = new Schema({
   trim: true,  
   required: true,
  },
- receiver: {
-  type: User,
+ receiver: [{
+  type: Schema.Types.ObjectId,         
+  ref: "User",
   trim: true,
   required: true
- },
+ }],
  topic: {
   type: String,
   trim: true,
@@ -30,12 +31,10 @@ const MessageSchema = new Schema({
  statusReceived:{
    type: Boolean,
    trim: true,
-   requeried: true
  },
  statusDeleted:{
   type: Boolean,
   trim: true,
-  requeried: true
 },
 }, {
   timestamps: true
