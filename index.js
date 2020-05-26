@@ -14,6 +14,7 @@ mongoose.Promise = global.Promise;
 const app = express();
 app.use(logger('dev'));
 app.set('secretKey', "N0VAMA1L");
+const helper = require('./helpers/validation.auth');
 // Configure the server [3]
 ////////////////////////////////////////////////////////////////////////
 // Parse requests of content-type - "application/x-www-form-urlencoded"
@@ -35,7 +36,7 @@ app.get('/', (req, res) => {
 });
 
 require('./app/routes/User.routes.js')(app);
-require('./app/routes/Message.routes.js')(app);
+require('./app/routes/Message.routes.js')(app,helper);
 // Start the server with selected configuration [5]
 ////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
