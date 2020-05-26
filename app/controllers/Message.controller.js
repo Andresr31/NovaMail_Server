@@ -1,9 +1,9 @@
 // Cargamos el modelo recien creado
 const Message = require('../models/Message.model.js');
-
+const User = require('../models/User.model.js');
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Create and save a new Message
-exports.createMessage = (req, res) => {
+exports.createMessage = async (req, res) => {
     // Validate if the request's body is empty
     // (does not include required data)
     if (Object.keys(req.body).length === 0) {
@@ -11,15 +11,21 @@ exports.createMessage = (req, res) => {
             message: "User data can not be empty"
         });
     }
-
-    // Create a new Message with request's data
+    var receiver = [];
+    for (let i = 0; i < req.body.receiver.length; i++) {
+        const email = req.body.receiver[i];
+        let id = await searchUser(email);
+        receiver.push(id);
+    }
+    
+    //Create a new Message with request's data
     const message = new Message({
         transmitter: req.body.transmitter,
-        receiver: req.body.receiver,
+        receiver: receiver,
         topic: req.body.topic,
-        content: req.data.content,
+        content: req.body.content,
         statusReceived: false,
-        statusDeleted: false
+        statusDeleted:false,
     });
     // Save the Message in the database
     message.save()
@@ -35,6 +41,12 @@ exports.createMessage = (req, res) => {
             });
         });
 };
+
+/// Función asincrona que retorna una promesa (User) la cual se utilizará para almacenar su id en el mensaje
+async function searchUser(email){
+    let user = await User.findOne({email: email});
+    return user._id;
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Retrieve and list all Messages on inbox
 exports.findAll = (req, res) => {
@@ -42,7 +54,7 @@ exports.findAll = (req, res) => {
         .then(messages => {
             res.status(200).send(messages);
         }).catch(err => {
-            res.status(500).send({
+            return res.status(500).send({
                 message: err.message || "Something wrong occurred while retrieving therecords."
             });
         });
