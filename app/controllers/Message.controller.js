@@ -17,7 +17,7 @@ exports.createMessage = (req, res) => {
         transmitter: req.body.transmitter,
         receiver: req.body.receiver,
         topic: req.body.topic,
-        content: req.data.content,
+        content: req.body.content,
         statusReceived: false,
         statusDeleted: false
     });
