@@ -11,9 +11,10 @@ exports.createMessage = async (req, res) => {
             message: "User data can not be empty"
         });
     }
+    
     var receiver = [];
-    for (let i = 0; i < req.body.receiver.length; i++) {
-        const email = req.body.receiver[i];
+    for (let i = 0; i < req.body.receiver.split(",").length; i++) {
+        const email = req.body.receiver.split(",")[i];
         let id = await searchUser(email);
         receiver.push(id);
     }
@@ -27,14 +28,17 @@ exports.createMessage = async (req, res) => {
         statusReceived: false,
         statusDeleted:false,
     });
+    console.log(message);
     // Save the Message in the database
     message.save()
         .then(data => {
+            console.log(data);
             res.status(200).send({
                 status: "succes",
                 data: data
             });
         }).catch(err => {
+            console.log(err);
             res.status(500).send({
                 status: "error",
                 message: err.message || "Something wrong occurred while creating therecord."
